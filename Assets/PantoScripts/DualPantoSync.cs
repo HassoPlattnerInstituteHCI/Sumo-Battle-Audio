@@ -180,14 +180,12 @@ public class DualPantoSync : MonoBehaviour
 
     private void CreateDebugObjects()
     {
-        UnityEngine.Object prefab = Resources.Load("Handle");
-
+        UnityEngine.Object prefab = Resources.Load("ItHandlePrefab");
         debugLowerObject = Instantiate(prefab) as GameObject;
-        debugLowerObject.transform.GetChild(0).GetComponent<Renderer>().material = Resources.Load("Materials/DebugLower") as Material;
         debugLowerObject.transform.position = new Vector3(0f, 0.5f, 10.0f);
 
+        prefab = Resources.Load("MeHandlePrefab");
         debugUpperObject = Instantiate(prefab) as GameObject;
-        debugUpperObject.transform.GetChild(0).GetComponent<Renderer>().material = Resources.Load("Materials/DebugUpper") as Material;
         debugUpperObject.transform.position = new Vector3(0f, 0.5f, 10.0f);
     }
 
@@ -237,12 +235,12 @@ public class DualPantoSync : MonoBehaviour
         }
         else
         {
-            Light upperLight = debugUpperObject.transform.GetChild(1).GetComponent<Light>();
-            Light lowerLight = debugLowerObject.transform.GetChild(1).GetComponent<Light>();
+            Light upperLight = debugUpperObject.transform.GetChild(0).GetComponent<Light>();
+            Light lowerLight = debugLowerObject.transform.GetChild(0).GetComponent<Light>();
             upperLight.enabled = !upperLight.enabled;
             lowerLight.enabled = !lowerLight.enabled;
-            if (!GetComponent<UpperHandle>().HasMeObject()) { upperLight.range = 9; }
-            if (!GetComponent<LowerHandle>().HasMeObject()) { lowerLight.range = 9; }
+            if (!GetComponent<UpperHandle>().HasMeObject()) { upperLight.range = 25; }
+            if (!GetComponent<LowerHandle>().HasMeObject()) { lowerLight.range = 25; }
 
             GameObject lights = GameObject.Find("Light");
             if (lights.GetComponent<Light>()) lights.GetComponent<Light>().enabled = !lights.GetComponent<Light>().enabled;
