@@ -398,16 +398,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e82d240d97ee4d52a223e2a70d3cb13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxSpeed: 10
   speed: 10
   focalPoint: {fileID: 1735178335}
   powerupStrength: 15
   powerupIndicator: {fileID: 54572457}
-  explosionPower: 2000
-  explosionRadius: 10
-  explosionUpwardForce: 2
-  explosionAffected:
+  pointAndClickAffected:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 512
+  pointAndClickDistance: 20
 --- !u!114 &1175163474
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -708,6 +707,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Island
       objectReference: {fileID: 0}
+    - target: {fileID: 1301643505922104, guid: 961be46ca9a355943ae3f65c47741bb0, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 4625923886776944, guid: 961be46ca9a355943ae3f65c47741bb0, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0
@@ -908,6 +911,11 @@ PrefabInstance:
       propertyPath: enemyClips.Array.data[0]
       value: 
       objectReference: {fileID: 8300000, guid: e4df86362b60c4775b96004d06d03699, type: 3}
+    - target: {fileID: 89157494781552761, guid: ff520691faef445279642e905f49f7ad,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ff520691faef445279642e905f49f7ad, type: 3}
 --- !u!1001 &7305732181041295649
