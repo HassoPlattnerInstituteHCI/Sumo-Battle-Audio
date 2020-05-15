@@ -8,7 +8,8 @@ public class SpawnManager : MonoBehaviour
     public int waveNumber = 1;  
     private int enemyCount;
 
-    public AudioClip[] enemyClips;
+    //public AudioClip[] enemyClips;
+    public string[] enemyNames;
 
     void Start()
     {
@@ -37,7 +38,8 @@ public class SpawnManager : MonoBehaviour
                 GenerateSpawnPosition(),
                 enemyPrefab.transform.rotation
             ).GetComponent<Enemy>();
-            enemy.nameClip = enemyClips[i % enemyClips.Length];
+            //enemy.nameClip = enemyClips[i % enemyClips.Length];
+            enemy.enemyName = enemyNames[i % enemyNames.Length];
         }
     }
 

@@ -908,6 +908,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 89157494781552761, guid: ff520691faef445279642e905f49f7ad,
         type: 3}
+      propertyPath: enemyNames.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 89157494781552761, guid: ff520691faef445279642e905f49f7ad,
+        type: 3}
       propertyPath: enemyClips.Array.data[0]
       value: 
       objectReference: {fileID: 8300000, guid: e4df86362b60c4775b96004d06d03699, type: 3}
@@ -915,6 +920,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 89157494781552761, guid: ff520691faef445279642e905f49f7ad,
+        type: 3}
+      propertyPath: enemyNames.Array.data[0]
+      value: John
+      objectReference: {fileID: 0}
+    - target: {fileID: 89157494781552761, guid: ff520691faef445279642e905f49f7ad,
+        type: 3}
+      propertyPath: enemyNames.Array.data[1]
+      value: Betty
+      objectReference: {fileID: 0}
+    - target: {fileID: 89157494781552761, guid: ff520691faef445279642e905f49f7ad,
+        type: 3}
+      propertyPath: enemyNames.Array.data[2]
+      value: Francis
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ff520691faef445279642e905f49f7ad, type: 3}
