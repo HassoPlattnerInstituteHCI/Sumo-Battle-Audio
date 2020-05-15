@@ -22,6 +22,16 @@ public class PlayerSoundEffect : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         speechOut = new SpeechOut();
+        InitSpeech();
+    }
+
+    /// <summary>
+    /// Avoids a bug where calling SpeechOut.Stop() before SpeechOut.Speak(...)
+    /// results in an error.
+    /// </summary>
+    private async void InitSpeech()
+    {
+        await speechOut.Speak("");
     }
 
     /// <summary>
@@ -29,7 +39,7 @@ public class PlayerSoundEffect : MonoBehaviour
     /// </summary>
     /// <param name="clip"></param>
     /// <param name="enemy">(optional) If enemy reference gets passed in</param>
-    public void PlayEnemyHitClip(string enemyName, GameObject enemy = null)
+    public void PlayEnemyHitClip(Enemy enemy)
     {
         if (enemy)
         {
@@ -37,9 +47,9 @@ public class PlayerSoundEffect : MonoBehaviour
             {
                 return;
             }
-            previousEnemy = enemy;
+            previousEnemy = enemy.gameObject;
         }
-        Say(enemyName + " hit me!");
+        Say(enemy.enemyName + " hit me!");
     }
 
     private async void Say(string input)

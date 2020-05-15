@@ -137,7 +137,7 @@ public class PlayerController : MonoBehaviour
         {
             Enemy enemy = other.GetComponent<Enemy>();
 
-            soundEffects.PlayEnemyHitClip(enemy.enemyName, other);
+            soundEffects.PlayEnemyHitClip(enemy);
 
             if (HasPowerup())
             {

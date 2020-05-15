@@ -422,7 +422,6 @@ MonoBehaviour:
   powerupClip: {fileID: 8300000, guid: 13178ce46620e49ddbe01e8e36b3ef52, type: 3}
   powerupHitClip: {fileID: 8300000, guid: 8d71b987b456e4441930b907ef73e574, type: 3}
   hitClip: {fileID: 8300000, guid: 47e125aa9f4cf42889b05e676420379a, type: 3}
-  warningClip: {fileID: 0}
   gameOverClip: {fileID: 8300000, guid: bd987fb8efd3647179693b4f1eecd0f7, type: 3}
   maxPitch: 1.2
   minPitch: 0.8
