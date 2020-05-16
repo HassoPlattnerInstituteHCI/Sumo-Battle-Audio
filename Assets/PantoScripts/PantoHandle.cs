@@ -40,7 +40,7 @@ public class PantoHandle : PantoBehaviour
         userControlledRotation = false;
         if (inTransition)
         {
-            Debug.LogWarning("Discarding not yet reached gameObject" + gameObject);
+            //Debug.LogWarning("Discarding not yet reached gameObject: " + handledGameObject.name);
         }
         Debug.Log("Switching to:" + newHandle.name);
         handledGameObject = newHandle;
@@ -140,6 +140,7 @@ public class PantoHandle : PantoBehaviour
     {
         if (handledGameObject == null)
         {
+            inTransition = false;
             return;
         }
 

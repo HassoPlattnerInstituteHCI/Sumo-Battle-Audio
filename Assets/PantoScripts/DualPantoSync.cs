@@ -239,9 +239,6 @@ public class DualPantoSync : MonoBehaviour
 
     public void UpdateHandlePosition(Vector3 position, float? rotation, bool isUpper)
     {
-        Vector2 pantoPoint = unityToPanto(new Vector2(position.x, position.z));
-        if (IsInBounds(pantoPoint))
-        {
             if (debug)
             {
                 GameObject debugObject = getDebugObject(isUpper);
@@ -251,11 +248,11 @@ public class DualPantoSync : MonoBehaviour
                 return;
 
             }
-            else
-            {
+        Vector2 pantoPoint = unityToPanto(new Vector2(position.x, position.z));
+        if (IsInBounds(pantoPoint))
+        {
                 //TODO Send Rotation
                 SendMotor(Handle, (byte)0, isUpper ? (byte)0 : (byte)1, pantoPoint.x, pantoPoint.y, 0);
-            }
         }
         else
         {
