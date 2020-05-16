@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
+using System.Threading.Tasks; //note that you need to include this if you want to use Task.Delay.
 
 public class PlayerSoundEffect : MonoBehaviour
 {
     public AudioClip powerupClip;
     public AudioClip powerupHitClip;
     public AudioClip hitClip;
-    public AudioClip warningClip;
+    //public AudioClip warningClip;
     public AudioClip gameOverClip;
 
     public float maxPitch = 1.2f;
@@ -15,9 +16,51 @@ public class PlayerSoundEffect : MonoBehaviour
 
     private GameObject previousEnemy;
 
+    private SpeechOut speechOut;
+
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        speechOut = new SpeechOut();
+        InitSpeech();
+    }
+
+    /// <summary>
+    /// Avoids a bug where calling SpeechOut.Stop() before SpeechOut.Speak(...)
+    /// results in an error.
+    /// </summary>
+    private async void InitSpeech()
+    {
+        await speechOut.Speak("");
+    }
+
+    /// <summary>
+    /// Says enemy name.
+    /// </summary>
+    /// <param name="clip"></param>
+    /// <param name="enemy">(optional) If enemy reference gets passed in</param>
+    public void PlayEnemyHitClip(Enemy enemy)
+    {
+        if (enemy)
+        {
+            if (previousEnemy && enemy.Equals(previousEnemy))
+            {
+                return;
+            }
+            previousEnemy = enemy.gameObject;
+        }
+        Say(enemy.enemyName + " hit me!");
+    }
+
+    private async void Say(string input)
+    {
+        speechOut.Stop();
+        await speechOut.Speak(input);
+    }
+
+    void OnApplicationQuit()
+    {
+        speechOut.Stop();
     }
 
     /// <summary>

@@ -144,8 +144,7 @@ public class PlayerController : MonoBehaviour
         {
             Enemy enemy = other.GetComponent<Enemy>();
 
-            soundEffects.PlayEnemyHitClip(enemy.nameClip, other);
-            // or use TTS with enemy.enemyName
+            soundEffects.PlayEnemyHitClip(enemy);
 
             if (HasPowerup())
             {

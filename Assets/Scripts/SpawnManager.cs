@@ -8,7 +8,8 @@ public class SpawnManager : MonoBehaviour
     public int waveNumber = 1;  
     private int enemyCount;
 
-    public AudioClip[] enemyClips;
+    //public AudioClip[] enemyClips;
+    public string[] enemyNames;
 
     void Start()
     {
@@ -35,7 +36,7 @@ public class SpawnManager : MonoBehaviour
             GenerateSpawnPosition(),
             enemyPrefab.transform.rotation
         );
-        enemy.GetComponent<Enemy>().nameClip = enemyClips[0];
+        enemy.GetComponent<Enemy>().enemyName = enemyNames[0];
         StartCoroutine(GameObject.Find("Panto").GetComponent<LowerHandle>().SwitchTo(enemy, 0.2f));
 
         for (int i = 1; i < numberOfEnemies; i++)
@@ -45,7 +46,7 @@ public class SpawnManager : MonoBehaviour
                 GenerateSpawnPosition(),
                 enemyPrefab.transform.rotation
             );
-            enemy.GetComponent<Enemy>().nameClip = enemyClips[i % enemyClips.Length];
+            enemy.GetComponent<Enemy>().enemyName = enemyNames[i % enemyNames.Length];
         }
     }
 
