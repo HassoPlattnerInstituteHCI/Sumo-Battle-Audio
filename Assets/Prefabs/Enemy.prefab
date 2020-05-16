@@ -219,6 +219,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 409183859e80f4abbb23d9a5fd69e1d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 4
+  speed: 8
   nameClip: {fileID: 8300000, guid: e4df86362b60c4775b96004d06d03699, type: 3}
   enemyName: Enemy

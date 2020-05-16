@@ -4,28 +4,6 @@ using UnityEngine;
 
 public class MeHandle : HighLevelHandle
 {
-    public bool onlyRotation = true;
-    public new void Awake()
-    {
-        base.Awake();
-        if (getIsActive())
-        {
-            activate();
-        }
-    }
-
-    public new void deactivate()
-    {
-        base.deactivate();
-        pantoHandle.MeObject(null);
-    }
-
-    public new void activate()
-    {
-        Debug.Log("Activate Me Handle");
-        base.activate();
-        pantoHandle.MeObject(this);
-    }
 
     public Vector3 UpdateMePosition(Vector3 newPosition, float newRotation)
     {

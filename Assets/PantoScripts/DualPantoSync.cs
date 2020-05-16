@@ -14,15 +14,15 @@ public class DualPantoSync : MonoBehaviour
     public float debugScrollSpeed = 10.0f;
     public KeyCode toggleVisionKey = KeyCode.Space;
     protected ulong Handle;
-
-    private static List<PantoHandle> registeredPantoHandles = new List<PantoHandle>();
+    private static LowerHandle lowerHandle;
+    private static UpperHandle upperHandle;
 
     // bounds are defined by center and extent
     private static Vector2[] pantoBounds = { new Vector2(0, -110), new Vector2(320, 160) };
     private static Vector2[] unityBounds;
 
     [Tooltip("Upper middle of the Play Area, if you use the default size, you don't need to update this")]
-    public static Vector3 handleDefaultPosition = new Vector3(0f, 0f, 24f); //unityToPanto(new Vector2(0, -32));
+    public static Vector3 handleDefaultPosition = new Vector3(0f, 0f, 13f); //unityToPanto(new Vector2(0, -32));
     private static Vector3 upperHandlePos = handleDefaultPosition;
     private static Vector3 lowerHandlePos = handleDefaultPosition;
     private static Vector3 upperGodObject = handleDefaultPosition;
@@ -107,40 +107,14 @@ public class DualPantoSync : MonoBehaviour
         upperHandlePos = new Vector3(unityPosUpper.x, 0, unityPosUpper.y);
         upperHandleRot = PantoToUnityRotation(positions[2]);
         upperGodObject = new Vector3(unityGodUpper.x, 0, unityGodUpper.y);
+        upperHandle.SetPositions(upperHandlePos, upperHandleRot, upperGodObject);
 
         Vector2 unityPosLower = pantoToUnity(new Vector2((float)positions[5], (float)positions[6]));
         Vector2 unityGodLower = pantoToUnity(new Vector2((float)positions[8], (float)positions[9]));
         lowerHandlePos = new Vector3(unityPosLower.x, 0, unityPosLower.y);
         lowerHandleRot = PantoToUnityRotation(positions[7]);
         lowerGodObject = new Vector3(unityGodLower.x, 0, unityGodLower.y);
-
-        updatePantoHandles();
-    }
-
-    private static void updatePantoHandles()
-    {
-        //foreach (PantoHandle.)
-        foreach (PantoHandle pantoHandle in registeredPantoHandles)
-        {
-            pantoHandle.NewPantoPositions(upperHandlePos, lowerHandlePos, upperHandleRot, lowerHandleRot);
-        }
-    }
-
-    public Vector3 GetHandlePosition(bool isUpper)
-    {
-        if (debug)
-        {
-            GameObject debugObject = getDebugObject(isUpper);
-            return debugObject.transform.position;
-        }
-        if (isUpper)
-        {
-            return upperHandlePos;
-        }
-        else
-        {
-            return lowerHandlePos;
-        }
+        lowerHandle.SetPositions(lowerHandlePos, lowerHandleRot, lowerGodObject);
     }
 
     private static ulong OpenPort(string port)
@@ -148,7 +122,7 @@ public class DualPantoSync : MonoBehaviour
         return Open(Marshal.StringToHGlobalAnsi(port));
     }
 
-    private GameObject getDebugObject(bool isUpper)
+    public GameObject getDebugObject(bool isUpper)
     {
         if (isUpper)
         {
@@ -182,11 +156,11 @@ public class DualPantoSync : MonoBehaviour
     {
         UnityEngine.Object prefab = Resources.Load("ItHandlePrefab");
         debugLowerObject = Instantiate(prefab) as GameObject;
-        debugLowerObject.transform.position = new Vector3(0f, 0.5f, 10.0f);
+        debugLowerObject.transform.position = new Vector3(0f, 0.5f, 13.0f);
 
         prefab = Resources.Load("MeHandlePrefab");
         debugUpperObject = Instantiate(prefab) as GameObject;
-        debugUpperObject.transform.position = new Vector3(0f, 0.5f, 10.0f);
+        debugUpperObject.transform.position = new Vector3(0f, 0.5f, 13.0f);
     }
 
     void OnDestroy()
@@ -199,19 +173,19 @@ public class DualPantoSync : MonoBehaviour
         if (!debug)
         {
             Poll(Handle);
-            //TODO Why is this here?
-            //FreeHandle(false);
         }
         else
         {
             Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            float mouseRotation = Input.mouseScrollDelta.y * debugScrollSpeed;
+            float mouseRotation = Input.GetAxis("Horizontal") * debugScrollSpeed;
             Vector3 position = new Vector3(mousePosition.x, 0.0f, mousePosition.z);
-            upperHandleRot = debugUpperObject.transform.eulerAngles.y + mouseRotation;
+            float r = debugUpperObject.transform.eulerAngles.y + mouseRotation;
             upperHandlePos = position;
+            upperHandle.SetPositions(upperHandlePos, r, null);
+            
             lowerHandleRot = debugLowerObject.transform.eulerAngles.y + mouseRotation;
             lowerHandlePos = position;
-            updatePantoHandles();
+            lowerHandle.SetPositions(lowerHandlePos, r, null);
         }
 
         if (Input.GetKeyDown(toggleVisionKey))
@@ -239,8 +213,6 @@ public class DualPantoSync : MonoBehaviour
             Light lowerLight = debugLowerObject.transform.GetChild(0).GetComponent<Light>();
             upperLight.enabled = !upperLight.enabled;
             lowerLight.enabled = !lowerLight.enabled;
-            if (!GetComponent<UpperHandle>().HasMeObject()) { upperLight.range = 25; }
-            if (!GetComponent<LowerHandle>().HasMeObject()) { lowerLight.range = 25; }
 
             GameObject lights = GameObject.Find("Light");
             if (lights.GetComponent<Light>()) lights.GetComponent<Light>().enabled = !lights.GetComponent<Light>().enabled;
@@ -263,7 +235,6 @@ public class DualPantoSync : MonoBehaviour
     private Vector3 GetPositionWithObstacles(Vector3 currentPosition, Vector3 wantedPosition)
     {
         return wantedPosition;
-
     }
 
     public void UpdateHandlePosition(Vector3 position, float? rotation, bool isUpper)
@@ -283,8 +254,7 @@ public class DualPantoSync : MonoBehaviour
             else
             {
                 //TODO Send Rotation
-                float pantoRotation = 0;// UnityToPantoRotation(rotation);
-                SendMotor(Handle, (byte)0, isUpper ? (byte)0 : (byte)1, pantoPoint.x, pantoPoint.y, pantoRotation);
+                SendMotor(Handle, (byte)0, isUpper ? (byte)0 : (byte)1, pantoPoint.x, pantoPoint.y, 0);
             }
         }
         else
@@ -308,7 +278,6 @@ public class DualPantoSync : MonoBehaviour
 
     private static float PantoToUnityRotation(double pantoDegrees)
     {
-        Debug.Log(pantoDegrees);
         return (float)((180f / Mathf.PI) * (-pantoDegrees));
     }
 
@@ -351,14 +320,14 @@ public class DualPantoSync : MonoBehaviour
         unityBounds = new Vector2[] { new Vector2(origin.x, origin.z), new Vector2(extent.x, extent.z) };
     }
 
-    public void registerHandle(PantoHandle newHandle)
+    public void RegisterUpperHandle(UpperHandle newHandle)
     {
-        registeredPantoHandles.Add(newHandle);
+        upperHandle = newHandle;
     }
 
-    public void unregisterHandle(PantoHandle newHandle)
+    public void RegisterLowerHandle(LowerHandle newHandle)
     {
-        registeredPantoHandles.Remove(newHandle);
+        lowerHandle = newHandle;
     }
 
     public ushort GetNextObstacleId()

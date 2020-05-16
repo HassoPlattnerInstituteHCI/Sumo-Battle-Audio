@@ -9,9 +9,35 @@ public class PantoHandle : PantoBehaviour
     private MeHandle meObject;
     private float speed;
     private bool inTransition = false;
+    private float rotation;
+    private Vector3 position;
+    private Vector3? godObjectPosition;
+    protected bool userControlledPosition = true; //for debug only
+    protected bool userControlledRotation = true; //for debug only
+
+    public IEnumerator MoveToPosition(Vector3 position, float newSpeed) {
+        //TODO
+        userControlledPosition = false;
+        if (inTransition)
+        {
+            Debug.LogWarning("Discarding not yet reached gameObject" + gameObject);
+        }
+        Debug.Log("Switching to:" + position);
+        //handledGameObject = newHandle;
+        speed = newSpeed;
+        inTransition = true;
+
+        while (inTransition)
+        {
+            yield return new WaitForSeconds(.01f);
+        }
+        Free();
+    }
 
     public IEnumerator SwitchTo(GameObject newHandle, float newSpeed)
     {
+        userControlledPosition = false;
+        userControlledRotation = false;
         if (inTransition)
         {
             Debug.LogWarning("Discarding not yet reached gameObject" + gameObject);
@@ -27,50 +53,52 @@ public class PantoHandle : PantoBehaviour
         }
     }
 
-    public void UnregisterHandledObject()
+    public float getRotation() {
+        if (pantoSync.debug) {
+            if (userControlledRotation) {
+                return rotation;
+            } else {
+                GameObject debugObject = pantoSync.getDebugObject(isUpper);
+                return debugObject.transform.eulerAngles.y;
+            }
+        } else {
+            return rotation;
+        }
+    }
+
+    public Vector3 getPosition() {
+        if (pantoSync.debug) {
+            if (userControlledPosition) {
+                return position;
+            } else {
+                GameObject debugObject = pantoSync.getDebugObject(isUpper);
+                return debugObject.transform.position;
+            }
+        } else {
+            return position;
+        }
+    }
+    
+    public Vector3? getGodObjectPosition() {
+        return godObjectPosition;
+    }
+
+    public void FreeRotation() {
+        if (pantoSync.debug) {
+            userControlledRotation = true;
+        } else {
+            //TODO
+        }
+    }
+
+    public void Free()
     {
         handledGameObject = null;
-        pantoSync.FreeHandle(isUpper);
-    }
-
-    public void MeObject(MeHandle newMeObject)
-    {
-        meObject = newMeObject;
-        pantoSync.registerHandle(this);
-    }
-
-    public bool HasMeObject()
-    {
-        return meObject != null;
-    }
-
-    public void NewPantoPositions(Vector3 upperHandlePos, Vector3 lowerHandlePos, float upperHandleRot, float lowerHandleRot)
-    {
-        if (isUpper)
-        {
-            UpdateMePosition(upperHandlePos, upperHandleRot);
-        }
-        else
-        {
-            UpdateMePosition(lowerHandlePos, lowerHandleRot);
-        }
-    }
-
-    private void UpdateMePosition(Vector3 newPosition, float newRotation)
-    {
-        if (meObject == null)
-        {
-            return;
-        }
-        if (meObject.onlyRotation)
-        {
-            pantoSync.SetDebugObjects(isUpper, null, newRotation);
-            return;
-        }
-        newPosition = meObject.UpdateMePosition(newPosition, newRotation);
-        if (pantoSync.debug)
-        {
-            pantoSync.SetDebugObjects(isUpper, newPosition, newRotation);
+        if (pantoSync.debug) {
+            userControlledPosition = true;
+            userControlledRotation = true;
+        } else {
+            pantoSync.FreeHandle(isUpper);
         }
     }
 
@@ -84,6 +112,21 @@ public class PantoHandle : PantoBehaviour
 
     }
 
+    public void SetPositions(Vector3 newPosition, float newRotation, Vector3? newGodObjectPosition)
+    {
+        if (userControlledRotation) {
+            GameObject debugObject = pantoSync.getDebugObject(isUpper);
+            debugObject.transform.eulerAngles = new Vector3(debugObject.transform.eulerAngles.x, newRotation, debugObject.transform.eulerAngles.z);
+        }
+        if (userControlledPosition) {
+            GameObject debugObject = pantoSync.getDebugObject(isUpper);
+            debugObject.transform.position = position;
+        }
+        position = newPosition;
+        rotation = newRotation;
+        godObjectPosition = newGodObjectPosition;
+    }
+
     public IEnumerator TraceObjectByPoints(List<GameObject> cornerObjects, float speed)
     {
         for (int i = 0; i < cornerObjects.Count; i++)
@@ -93,20 +136,18 @@ public class PantoHandle : PantoBehaviour
         yield return SwitchTo(cornerObjects[0], speed);
     }
 
-    void Update()
+    protected void Update()
     {
         if (handledGameObject == null)
         {
-            Debug.Log("No active GameObject");
             return;
         }
 
         if (inTransition)
         {
-            Vector3 currentPos = GetPantoSync().GetHandlePosition(isUpper);
+            Vector3 currentPos = getPosition();
             Vector3 goalPos = handledGameObject.transform.position;
             Vector3 distance = goalPos - currentPos;
-            //float multiplier = Mathf.Min(Time.deltaTime, 0.25f); //Time.deltaTime > 0.25 ? 0.25 : Time.deltaTime;
             Vector3 movement = (distance).normalized * speed;
             if (distance.magnitude <= movement.magnitude)
             {
@@ -115,19 +156,12 @@ public class PantoHandle : PantoBehaviour
             }
             else
             {
-                if (handledGameObject.GetComponent<ItHandle>() != null && handledGameObject.GetComponent<ItHandle>().positionOnly)
-                {
-                    GetPantoSync().UpdateHandlePosition(currentPos + movement, null, isUpper);
-                }
-                else
-                {
-                    GetPantoSync().UpdateHandlePosition(currentPos + movement, handledGameObject.transform.eulerAngles.y, isUpper);
-                }
+                GetPantoSync().UpdateHandlePosition(currentPos + movement, null, isUpper);
             }
         }
         if (!inTransition)
         {
-            GetPantoSync().UpdateHandlePosition(handledGameObject.transform.position, handledGameObject.transform.eulerAngles.y, isUpper);
+            GetPantoSync().UpdateHandlePosition(handledGameObject.transform.position, null, isUpper);
         }
     }
 }

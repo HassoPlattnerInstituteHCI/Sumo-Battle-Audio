@@ -30,14 +30,22 @@ public class SpawnManager : MonoBehaviour
     /// challenge: spawn specified numberOfEnemies using Instantiate(...)
     void SpawnEnemyWave(int numberOfEnemies)
     {
-        for (int i = 0; i < numberOfEnemies; i++)
+        GameObject enemy = Instantiate(
+            enemyPrefab,
+            GenerateSpawnPosition(),
+            enemyPrefab.transform.rotation
+        );
+        enemy.GetComponent<Enemy>().nameClip = enemyClips[0];
+        StartCoroutine(GameObject.Find("Panto").GetComponent<LowerHandle>().SwitchTo(enemy, 0.2f));
+
+        for (int i = 1; i < numberOfEnemies; i++)
         {
-            Enemy enemy = Instantiate(
+            enemy = Instantiate(
                 enemyPrefab,
                 GenerateSpawnPosition(),
                 enemyPrefab.transform.rotation
-            ).GetComponent<Enemy>();
-            enemy.nameClip = enemyClips[i % enemyClips.Length];
+            );
+            enemy.GetComponent<Enemy>().nameClip = enemyClips[i % enemyClips.Length];
         }
     }
 

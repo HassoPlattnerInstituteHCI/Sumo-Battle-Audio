@@ -37,6 +37,9 @@ public class PlayerController : MonoBehaviour
         // gameObject.GetComponent<Rigidbody>() would work as well
         playerRb = GetComponent<Rigidbody>();
         soundEffects = GetComponent<PlayerSoundEffect>();
+        UpperHandle upperHandle = GameObject.Find("Panto").GetComponent<UpperHandle>();
+        StartCoroutine(upperHandle.SwitchTo(gameObject, 0.2f));
+        upperHandle.FreeRotation();
     }
 
     // Update is called once per frame
@@ -51,12 +54,7 @@ public class PlayerController : MonoBehaviour
             Destroy(gameObject, clipTime);
         }
 
-        //if (Input.GetButtonDown("Jump"))
-        //{
-        //    ExplosionPowerup();
-        //}
-
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -72,7 +70,16 @@ public class PlayerController : MonoBehaviour
     // FixedUpdate is called on a fixed physics loop
     void FixedUpdate()
     {
-        PointAndClickMovement();
+        //PointAndClickMovement();
+        PantoMovement();
+    }
+
+    void PantoMovement()
+    {
+        float rotation = GameObject.Find("Panto").GetComponent<UpperHandle>().getRotation();
+        // Rotate the forward direction around the Y Axis
+        Vector3 direction = Quaternion.Euler(0, rotation, 0) * Vector3.forward;
+        playerRb.velocity = speed * direction;
     }
 
     /// <summary>

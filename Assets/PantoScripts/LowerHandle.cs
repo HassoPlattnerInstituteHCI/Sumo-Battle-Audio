@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class LowerHandle : PantoHandle
 {
-    void Start()
+    new void Awake()
     {
+        base.Awake();
         isUpper = false;
+        pantoSync.RegisterLowerHandle(this);
     }
 }

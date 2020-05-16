@@ -48,8 +48,8 @@ public class Level : PantoBehaviour
         {
             yield return pantoHandle.SwitchTo(objectOfInterest.gameObject, 0.2f);
         }
-        GetPantoGameObject().GetComponent<LowerHandle>().UnregisterHandledObject();
-        GetPantoGameObject().GetComponent<UpperHandle>().UnregisterHandledObject();
+        GetPantoGameObject().GetComponent<LowerHandle>().Free();
+        GetPantoGameObject().GetComponent<UpperHandle>().Free();
     }
 }
 
