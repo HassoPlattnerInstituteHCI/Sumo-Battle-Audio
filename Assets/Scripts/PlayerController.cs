@@ -37,6 +37,10 @@ public class PlayerController : MonoBehaviour
         // gameObject.GetComponent<Rigidbody>() would work as well
         playerRb = GetComponent<Rigidbody>();
         soundEffects = GetComponent<PlayerSoundEffect>();
+        //activatePlayer();
+    }
+
+    public void activatePlayer() {
         UpperHandle upperHandle = GameObject.Find("Panto").GetComponent<UpperHandle>();
         StartCoroutine(upperHandle.SwitchTo(gameObject, 0.2f));
         upperHandle.FreeRotation();
@@ -45,6 +49,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!GameObject.FindObjectOfType<SpawnManager>().gameStarted) return;
         powerupIndicator.transform.position = transform.position + new Vector3(0f, -0.5f, 0f);
 
         if (transform.position.y < -10f && !playerFellDown)
@@ -70,6 +75,7 @@ public class PlayerController : MonoBehaviour
     // FixedUpdate is called on a fixed physics loop
     void FixedUpdate()
     {
+        if (!GameObject.FindObjectOfType<SpawnManager>().gameStarted) return;
         //PointAndClickMovement();
         PantoMovement();
     }

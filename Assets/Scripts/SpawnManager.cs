@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 public class SpawnManager : MonoBehaviour
 {
@@ -11,14 +12,23 @@ public class SpawnManager : MonoBehaviour
     //public AudioClip[] enemyClips;
     public string[] enemyNames;
 
+    public bool gameStarted = false;
+
     void Start()
     {
-        SpawnEnemyWave(waveNumber);
-        SpawnPowerup();
+        StartCoroutine(StartGame());
+    }
+
+    IEnumerator StartGame() {
+        Level room = GameObject.Find("Panto").GetComponent<Level>();
+        yield return room.playIntroduction();
+        GameObject.FindObjectOfType<PlayerController>().activatePlayer();
+        gameStarted = true;
     }
 
     void Update()
     {
+        if (!gameStarted) return;
         enemyCount = FindObjectsOfType<Enemy>().Length;
         if (enemyCount == 0)
         {
