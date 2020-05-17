@@ -21,7 +21,7 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
-        // if the game object falls below -10 on the y-axis we gonna remove it
+        // if the game object falls below -2 on the y-axis we gonna remove it
         // from the game
         if (transform.position.y < -2)
         {
@@ -33,7 +33,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    GameObject GetClosestObject(string tag, Vector3 position)
+    public static GameObject GetClosestObject(string tag, Vector3 position)
     {
         GameObject[] gos = GameObject.FindGameObjectsWithTag(tag);
         GameObject closest = null;

@@ -2,6 +2,7 @@
 /// On Mac: CMD + SHIFT + 7
 /// On Windows: CTRL + K and then CTRL + C
 
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -31,6 +32,10 @@ public class PlayerController : MonoBehaviour
     //public float explosionUpwardForce = 2f;
     //public LayerMask explosionAffected;
 
+    private SpeechIn speech;
+
+    private bool movementFrozen = false;
+
     void Start()
     {
         // looks in the (current) gameObject for component of type Rigidbody
@@ -38,6 +43,30 @@ public class PlayerController : MonoBehaviour
         playerRb = GetComponent<Rigidbody>();
         soundEffects = GetComponent<PlayerSoundEffect>();
         //activatePlayer();
+
+        speech = new SpeechIn(onSpeechRecognized);
+        speech.StartListening(new string[]{"help", "resume"});
+    }
+
+    void onSpeechRecognized(string command) {
+        Debug.Log("Recognized: " + command);
+        if (command == "resume" && movementFrozen) {
+            StartCoroutine(ResumeAfterPause());
+        } else if (command == "help" && !movementFrozen) {
+            toggleMovementFrozen();
+            var powerups = GameObject.FindGameObjectsWithTag("Powerup");
+            if (powerups.Length > 0) {
+                StartCoroutine(GameObject.Find("Panto").GetComponent<LowerHandle>().SwitchTo(powerups[0], 0.2f));
+            }
+        }
+    }
+
+    IEnumerator ResumeAfterPause() {
+        var enemy = Enemy.GetClosestObject("Enemy", transform.position);
+        if (enemy != null) {
+            yield return GameObject.Find("Panto").GetComponent<LowerHandle>().SwitchTo(enemy, 0.2f);
+        }
+        toggleMovementFrozen();
     }
 
     public void activatePlayer() {
@@ -46,9 +75,26 @@ public class PlayerController : MonoBehaviour
         upperHandle.FreeRotation();
     }
 
+    void toggleMovementFrozen()
+    {
+        playerRb.constraints = !movementFrozen ? RigidbodyConstraints.FreezeAll : RigidbodyConstraints.None;
+        foreach (var enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+        {
+            enemy.GetComponent<Rigidbody>().constraints = !movementFrozen ? RigidbodyConstraints.FreezeAll : RigidbodyConstraints.None;
+        }
+        movementFrozen = !movementFrozen;
+    }
+
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown("h")) {
+            onSpeechRecognized("help");
+        }
+        if (Input.GetKeyDown("r")) {
+            onSpeechRecognized("resume");
+        }
+
         if (!GameObject.FindObjectOfType<SpawnManager>().gameStarted) return;
         powerupIndicator.transform.position = transform.position + new Vector3(0f, -0.5f, 0f);
 
