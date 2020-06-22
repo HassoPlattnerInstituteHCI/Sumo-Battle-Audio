@@ -48,6 +48,11 @@ public class PlayerController : MonoBehaviour
         speech.StartListening(new string[]{"help", "resume"});
     }
 
+    void OnApplicationQuit()
+    {
+        speech.StopListening();
+    }
+
     void onSpeechRecognized(string command) {
         Debug.Log("Recognized: " + command);
         if (command == "resume" && movementFrozen) {

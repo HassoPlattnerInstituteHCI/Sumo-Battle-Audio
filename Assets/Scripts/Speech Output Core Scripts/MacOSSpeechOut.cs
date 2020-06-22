@@ -22,11 +22,11 @@ public class MacOSSPeechOut : SpeechBase
         }
         if (text == "crazylaugh")
         {
-            cmdArgs = string.Format("-a {0} -v Hysterical \"muhahahaha\" ", outputChannel);     //couldnt help myself ;)
+            cmdArgs = string.Format("-v Hysterical \"muhahahaha\" ");     //couldnt help myself ;)
         }
         else
         {
-            cmdArgs = string.Format("-r {3} -a {2} -v {0} \"{1}\" ", voice, text.Replace("\"", ","), outputChannel, rate);
+            cmdArgs = string.Format("-r {2} -v {0} \"{1}\" ", voice, text.Replace("\"", ","), rate);
         }
         speechProcess =  System.Diagnostics.Process.Start("/usr/bin/say", cmdArgs);
         SpeechBase.isSpeaking = true;
